@@ -16,12 +16,15 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.enums import TA_RIGHT, TA_CENTER
 
 
-# ===== تسجيل الخط العربي =====
+import os
+
 FONT_NAME = "ArabicFont"
-FONT_PATH = "C:/Windows/Fonts/arial.ttf"  # خط عربي متوفر في ويندوز
+# مسار الخط داخل مجلد المشروع
+FONT_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Amiri", "Amiri-Regular.ttf")
 
 try:
     pdfmetrics.registerFont(TTFont(FONT_NAME, FONT_PATH))
+    print(f"✅ تم تحميل الخط: {FONT_PATH}")
 except Exception as e:
     print(f"⚠️ مش قادر أحمّل الخط من {FONT_PATH}: {e}")
     FONT_NAME = "Helvetica"  # fallback
