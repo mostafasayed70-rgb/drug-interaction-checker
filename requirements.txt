@@ -1,0 +1,7 @@
+streamlit
+sqlalchemy
+pandas
+reportlab
+arabic-reshaper
+python-bidi
+altair
