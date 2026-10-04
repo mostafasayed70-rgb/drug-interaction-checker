@@ -1,80 +1,256 @@
-"""واجهة تفاعلية للتداخلات الدوائية (عربي + إنجليزي)"""
+"""واجهة تفاعلية للتداخلات الدوائية - تصميم Modern Medical + Playful"""
 
 import streamlit as st
 import pandas as pd
 import altair as alt
 from itertools import combinations
+from datetime import datetime
 from src.database import Session, ActiveIngredient, Interaction, BrandName
 from src.pdf_export import create_pdf_report
-from datetime import datetime
 
-# إعداد الصفحة
+# ==================== إعداد الصفحة ====================
 st.set_page_config(
     page_title="فحص التداخلات الدوائية",
     page_icon="💊",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-# ===== Header =====
-col_logo, col_title = st.columns([1, 5])
-with col_logo:
-    st.markdown("# 💊")
-with col_title:
-    st.title("فحص التداخلات الدوائية")
-    st.markdown("أداة تفاعلية لفحص التداخلات الدوائية بين المواد الفعالة")
-
-st.markdown("---")
-
-st.markdown(
-    """
-    <div style='text-align: center; color: #7f8c8d; font-size: 14px; padding: 10px;'>
-        👨‍💻 تطوير: <b> Dr.Mostafa Sayed </b> | 📅 2026
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-st.markdown("---")
+# ==================== CSS مخصص ====================
+st.markdown("""
+<style>
+    /* استيراد الخطوط */
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap');
+    
+    /* التنسيق العام */
+    html, body, [class*="css"] {
+        font-family: 'Cairo', 'Inter', sans-serif;
+    }
+    
+    /* الخلفية بتدرج */
+    .stApp {
+        background: linear-gradient(135deg, #F8FAFC 0%, #E8F4F8 50%, #F0F9FF 100%);
+    }
+    
+    /* Header رئيسي */
+    .main-header {
+        background: linear-gradient(135deg, #4A90E2 0%, #26D0CE 100%);
+        padding: 2.5rem 2rem;
+        border-radius: 20px;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
+        animation: fadeInDown 0.8s ease-out;
+    }
+    
+    .main-header h1 {
+        color: white !important;
+        font-size: 2.5rem;
+        margin: 0;
+        font-weight: 900;
+        text-align: center;
+    }
+    
+    .main-header p {
+        color: rgba(255,255,255,0.95);
+        font-size: 1.1rem;
+        text-align: center;
+        margin-top: 0.5rem;
+    }
+    
+    .dev-badge {
+        text-align: center;
+        color: white;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        opacity: 0.95;
+    }
+    
+    /* كروت المواد */
+    .ingredient-card {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 15px;
+        border-right: 4px solid #4A90E2;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin: 0.5rem 0;
+        animation: slideInRight 0.5s ease-out;
+    }
+    
+    /* بطاقة النتيجة - خطير */
+    .result-card-major {
+        background: linear-gradient(135deg, #FFE5E5 0%, #FFD0D0 100%);
+        border-right: 6px solid #E74C3C;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin: 1rem 0;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.15);
+        animation: slideInUp 0.5s ease-out;
+    }
+    
+    /* بطاقة النتيجة - متوسط */
+    .result-card-moderate {
+        background: linear-gradient(135deg, #FFF5E5 0%, #FFE8C0 100%);
+        border-right: 6px solid #F39C12;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin: 1rem 0;
+        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.15);
+        animation: slideInUp 0.5s ease-out;
+    }
+    
+    /* بطاقة النتيجة - بسيط */
+    .result-card-minor {
+        background: linear-gradient(135deg, #E5F8F0 0%, #D0F0E0 100%);
+        border-right: 6px solid #27AE60;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin: 1rem 0;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.15);
+        animation: slideInUp 0.5s ease-out;
+    }
+    
+    .result-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1E293B;
+        margin-bottom: 0.8rem;
+    }
+    
+    .result-desc {
+        color: #475569;
+        margin: 0.5rem 0;
+        line-height: 1.6;
+    }
+    
+    /* Metric Cards */
+    .metric-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+        animation: popIn 0.5s ease-out;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .metric-number {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin: 0.5rem 0;
+    }
+    
+    .metric-label {
+        font-size: 0.95rem;
+        color: #64748B;
+        font-weight: 600;
+    }
+    
+    /* Badges */
+    .badge {
+        display: inline-block;
+        padding: 0.35rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin: 0.2rem;
+    }
+    
+    .badge-major { background: #E74C3C; color: white; }
+    .badge-moderate { background: #F39C12; color: white; }
+    .badge-minor { background: #27AE60; color: white; }
+    
+    /* زرار أساسي */
+    .stButton > button {
+        background: linear-gradient(135deg, #4A90E2 0%, #26D0CE 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.7rem 2rem;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    }
+    
+    /* Animations */
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes popIn {
+        0% { opacity: 0; transform: scale(0.8); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    
+    /* Input Fields */
+    .stTextInput > div > div > input,
+    .stSelectbox > div > div > div {
+        border-radius: 12px !important;
+        border: 2px solid #E2E8F0 !important;
+        padding: 0.6rem 1rem !important;
+    }
+    
+    .stTextInput > div > div > input:focus,
+    .stSelectbox > div > div > div:focus-within {
+        border-color: #4A90E2 !important;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1) !important;
+    }
+    
+    /* إخفاء قائمة Streamlit */
+    #MainMenu { visibility: hidden; }
+    footer { visibility: hidden; }
+</style>
+""", unsafe_allow_html=True)
 
 
 # ==================== الدوال ====================
 
 def get_all_ingredients():
-    """جلب كل المواد (اسم + اسم عربي) + الأسماء التجارية"""
+    """جلب كل المواد (اسم + اسم عربي + أسماء تجارية)"""
     session = Session()
     try:
         items = session.query(ActiveIngredient).order_by(ActiveIngredient.name).all()
-
-        # قاموس الأسماء التجارية: brand_name → ingredient_name
         brands = session.query(BrandName).all()
-        brand_map = {}
-        for b in brands:
-            brand_map[b.brand_name] = b.ingredient_id
+        brand_map = {b.brand_name: b.ingredient_id for b in brands}
 
-        # قاموس العرض: display_name → id
         result = {}
         for item in items:
-            # الاسم الأساسي
             if item.name_ar:
                 display = f"{item.name} ({item.name_ar})"
             else:
                 display = item.name
             result[display] = item.id
-
-            # الأسماء التجارية المرتبطة بالمادة دي
             for brand_name, ing_id in brand_map.items():
                 if ing_id == item.id:
-                    brand_display = f"{brand_name} → {item.name}"
-                    result[brand_display] = item.id
+                    result[f"{brand_name} → {item.name}"] = item.id
 
-        # رتّب أبجدياً
-        result = dict(sorted(result.items(), key=lambda x: x[0].lower()))
-        return result
+        return dict(sorted(result.items(), key=lambda x: x[0].lower()))
     finally:
         session.close()
 
 
 def get_ingredient_by_id(ing_id: int):
-    """جلب مادة بالـ id"""
     session = Session()
     try:
         return session.get(ActiveIngredient, ing_id)
@@ -83,7 +259,6 @@ def get_ingredient_by_id(ing_id: int):
 
 
 def format_name(ing):
-    """تنسيق اسم المادة (إنجليزي + عربي)"""
     if ing.name_ar:
         return f"{ing.name} ({ing.name_ar})"
     return ing.name
@@ -95,15 +270,13 @@ def get_interaction_between(id_a: int, id_b: int):
         if id_a > id_b:
             id_a, id_b = id_b, id_a
         return session.query(Interaction).filter_by(
-            ingredient_a_id=id_a,
-            ingredient_b_id=id_b
+            ingredient_a_id=id_a, ingredient_b_id=id_b
         ).first()
     finally:
         session.close()
 
 
 # ==================== إدارة الحالة ====================
-
 if "num_fields" not in st.session_state:
     st.session_state.num_fields = 2
 
@@ -117,11 +290,19 @@ def remove_field(idx):
         st.session_state.num_fields -= 1
 
 
+# ==================== Header ====================
+st.markdown("""
+<div class="main-header">
+    <h1>💊 فحص التداخلات الدوائية</h1>
+    <p>أداة تفاعلية ذكية لفحص التداخلات الدوائية بين المواد الفعالة</p>
+    <div class="dev-badge">👨‍💻 تطوير: <b>Dr. Mostafa Sayed</b> | 📅 2026</div>
+</div>
+""", unsafe_allow_html=True)
+
+
 # ==================== الواجهة ====================
+st.markdown("### 📋 المواد الفعالة")
 
-st.subheader("📋 المواد الفعالة")
-
-# جلب كل المواد
 all_ingredients = get_all_ingredients()
 options_list = list(all_ingredients.keys())
 
@@ -134,35 +315,33 @@ for i in range(st.session_state.num_fields):
             options=options_list,
             index=None,
             key=f"ing_{i}",
-            placeholder="اكتب اسم المادة (إنجليزي أو عربي)...",
+            placeholder="🔍 اكتب اسم المادة (إنجليزي أو عربي)...",
             label_visibility="collapsed"
         )
-        ingredient_inputs.append(val)
+        ingredient_inputs.append(val if val else "")
     with col2:
         if st.session_state.num_fields > 2:
-            if st.button("❌", key=f"del_{i}", help="امسح المادة دي"):
+            if st.button("❌", key=f"del_{i}", help="امسح المادة"):
                 remove_field(i)
                 st.rerun()
 
 col_add, col_empty = st.columns([1, 4])
 with col_add:
-    if st.button("➕ إضافة مادة", use_container_width=True):
+    if st.button("➕ إضافة مادة", width='stretch'):
         add_field()
         st.rerun()
 
 st.markdown("---")
 
 # زرار الفحص
-if st.button("🔎 افحص التداخلات", type="primary", use_container_width=True):
-    # فلترة المختار
-    selected_displays = [n for n in ingredient_inputs if n]
+if st.button("🔎 افحص التداخلات", type="primary", width='stretch'):
+    names = [n for n in ingredient_inputs if n]
 
-    if len(selected_displays) < 2:
+    if len(names) < 2:
         st.warning("⚠️ اختر على الأقل مادتين")
     else:
-        # جلب الـ ids
         ingredients = []
-        for display in selected_displays:
+        for display in names:
             ing_id = all_ingredients.get(display)
             if ing_id:
                 ing = get_ingredient_by_id(ing_id)
@@ -172,16 +351,21 @@ if st.button("🔎 افحص التداخلات", type="primary", use_container_w
         if len(ingredients) < 2:
             st.error("❌ محتاج على الأقل مادتين")
         else:
-            st.success(f"✅ هفحص **{len(ingredients)}** مادة")
+            st.markdown(f"### ✅ هفحص **{len(ingredients)}** مادة")
 
-            # عرض المواد
-            cols = st.columns(len(ingredients))
+            # كروت المواد
+            cols = st.columns(min(len(ingredients), 4))
             for i, ing in enumerate(ingredients):
-                cols[i].markdown(f"**{format_name(ing)}**")
+                with cols[i % 4]:
+                    st.markdown(f"""
+                    <div class="ingredient-card">
+                        💊 <b>{format_name(ing)}</b>
+                    </div>
+                    """, unsafe_allow_html=True)
 
             st.markdown("---")
 
-            # افحص كل الأزواج
+            # فحص الأزواج
             found_interactions = []
             pairs_checked = 0
 
@@ -200,48 +384,100 @@ if st.button("🔎 افحص التداخلات", type="primary", use_container_w
             severity_order = {"major": 1, "moderate": 2, "minor": 3, "unknown": 4}
             found_interactions.sort(key=lambda x: severity_order.get(x["severity"], 5))
 
-            # ==================== النتائج ====================
-            st.subheader(f"📊 نتيجة الفحص ({pairs_checked} زوج تم فحصه)")
+            # النتائج
+            st.markdown(f"## 📊 نتيجة الفحص ({pairs_checked} زوج)")
 
             if not found_interactions:
                 st.success("✅ **مفيش تداخلات مسجلة بين هذه المواد!**")
-                st.info("💡 بس خد بالك إن القاعدة مش شاملة كل التداخلات المحتملة.")
+                st.info("💡 القاعدة مش شاملة كل التداخلات المحتملة.")
             else:
                 major = sum(1 for i in found_interactions if i["severity"] == "major")
                 moderate = sum(1 for i in found_interactions if i["severity"] == "moderate")
                 minor = sum(1 for i in found_interactions if i["severity"] == "minor")
-                total = len(found_interactions)
 
-                # التنبيه النصي
+                # تنبيه
                 if major > 0:
-                    st.error(
-                        f"🚨 **تحذير خطير!** فيه **{major}** تداخل دوائي خطير بين المواد دي. "
-                        f"**لازم تراجع الطبيب أو الصيدلي فوراً قبل ما تاخد أي دواء.**"
-                    )
+                    st.error(f"🚨 **تحذير خطير!** فيه **{major}** تداخل خطير. راجع الطبيب فوراً.")
                 elif moderate > 0:
-                    st.warning(
-                        f"⚠️ **انتبه!** فيه **{moderate}** تداخل دوائي متوسط. "
-                        f"**يُفضل استشارة الصيدلي قبل الاستخدام.**"
-                    )
+                    st.warning(f"⚠️ **انتبه!** فيه **{moderate}** تداخل متوسط. استشر الصيدلي.")
                 elif minor > 0:
-                    st.info(
-                        f"ℹ️ فيه **{minor}** تداخل بسيط. "
-                        f"**خد بالك واستشر الصيدلي لو فيه أي قلق.**"
-                    )
+                    st.info(f"ℹ️ فيه **{minor}** تداخل بسيط.")
 
-                st.markdown("---")
-
-                # عدادات
+                # Metric Cards
+                st.markdown("### 📈 ملخص")
                 col1, col2, col3, col4 = st.columns(4)
-                col1.metric("🔴 خطير", major)
-                col2.metric("🟡 متوسط", moderate)
-                col3.metric("🟢 بسيط", minor)
-                col4.metric("📊 الإجمالي", total)
+
+                with col1:
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <div style="font-size:1.5rem">🔴</div>
+                        <div class="metric-number" style="color:#E74C3C">{major}</div>
+                        <div class="metric-label">خطير</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                with col2:
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <div style="font-size:1.5rem">🟡</div>
+                        <div class="metric-number" style="color:#F39C12">{moderate}</div>
+                        <div class="metric-label">متوسط</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                with col3:
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <div style="font-size:1.5rem">🟢</div>
+                        <div class="metric-number" style="color:#27AE60">{minor}</div>
+                        <div class="metric-label">بسيط</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                with col4:
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <div style="font-size:1.5rem">📊</div>
+                        <div class="metric-number" style="color:#4A90E2">{len(found_interactions)}</div>
+                        <div class="metric-label">الإجمالي</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
                 st.markdown("---")
 
-                # ==================== الرسوم البيانية ====================
-                st.subheader("📈 ملخص مرئي")
+                # تفاصيل التداخلات - Cards
+                st.markdown("### 📖 تفاصيل التداخلات")
+
+                for inter in found_interactions:
+                    sev = inter["severity"]
+                    if sev == "major":
+                        card_class = "result-card-major"
+                        badge_class = "badge-major"
+                        badge_text = "🔴 خطير"
+                    elif sev == "moderate":
+                        card_class = "result-card-moderate"
+                        badge_class = "badge-moderate"
+                        badge_text = "🟡 متوسط"
+                    else:
+                        card_class = "result-card-minor"
+                        badge_class = "badge-minor"
+                        badge_text = "🟢 بسيط"
+
+                    st.markdown(f"""
+                    <div class="{card_class}">
+                        <span class="badge {badge_class}">{badge_text}</span>
+                        <div class="result-title" style="margin-top:0.5rem">
+                            💊 {inter['a']} <span style="color:#94A3B8">+</span> {inter['b']}
+                        </div>
+                        <div class="result-desc">📋 <b>الوصف:</b> {inter['description']}</div>
+                        <div class="result-desc">💡 <b>التوصية:</b> {inter['management']}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                st.markdown("---")
+
+                # Chart
+                st.markdown("### 📊 ملخص مرئي")
 
                 chart_col1, chart_col2 = st.columns(2)
 
@@ -252,23 +488,20 @@ if st.button("🔎 افحص التداخلات", type="primary", use_container_w
                         "العدد": [major, moderate, minor]
                     })
                     chart_data = chart_data[chart_data["العدد"] > 0]
-
                     if not chart_data.empty:
                         color_scale = alt.Scale(
                             domain=["خطير", "متوسط", "بسيط"],
-                            range=["#e74c3c", "#f39c12", "#27ae60"]
+                            range=["#E74C3C", "#F39C12", "#27AE60"]
                         )
-                        chart = alt.Chart(chart_data).mark_bar().encode(
-                            x=alt.X("الخطورة:N", sort=["خطير", "متوسط", "بسيط"], title=""),
-                            y=alt.Y("العدد:Q", title="عدد التداخلات"),
-                            color=alt.Color("الخطورة:N", scale=color_scale, legend=None),
+                        chart = alt.Chart(chart_data).mark_arc(innerRadius=50).encode(
+                            theta=alt.Theta("العدد:Q"),
+                            color=alt.Color("الخطورة:N", scale=color_scale),
                             tooltip=["الخطورة", "العدد"]
                         ).properties(height=300)
-                        st.altair_chart(chart, use_container_width=True)
+                        st.altair_chart(chart, width='stretch')
 
                 with chart_col2:
-                    st.markdown("**عدد التداخلات لكل مادة**")
-
+                    st.markdown("**التداخلات لكل مادة**")
                     severity_rank = {"major": 3, "moderate": 2, "minor": 1, "unknown": 0}
                     ing_severity = {}
                     ing_counts = {}
@@ -283,151 +516,61 @@ if st.button("🔎 افحص التداخلات", type="primary", use_container_w
                     if ing_counts:
                         df_counts = pd.DataFrame({
                             "المادة": list(ing_counts.keys()),
-                            "عدد التداخلات": list(ing_counts.values()),
-                            "الخطورة": [ing_severity.get(m, "unknown") for m in ing_counts.keys()],
-                        }).sort_values("عدد التداخلات", ascending=False)
-
-                        severity_map = {
-                            "major": "خطير",
-                            "moderate": "متوسط",
-                            "minor": "بسيط",
-                            "unknown": "غير معروف"
-                        }
-                        df_counts["الخطورة"] = df_counts["الخطورة"].map(severity_map)
-
-                        color_scale2 = alt.Scale(
-                            domain=["خطير", "متوسط", "بسيط", "غير معروف"],
-                            range=["#e74c3c", "#f39c12", "#27ae60", "#95a5a6"]
-                        )
-                        chart2 = alt.Chart(df_counts).mark_bar().encode(
-                            x=alt.X("المادة:N", sort="-y", title=""),
-                            y=alt.Y("عدد التداخلات:Q", title="عدد التداخلات"),
-                            color=alt.Color("الخطورة:N", scale=color_scale2, title="أعلى خطورة"),
-                            tooltip=["المادة", "عدد التداخلات", "الخطورة"]
+                            "عدد": list(ing_counts.values()),
+                        }).sort_values("عدد", ascending=True)
+                        chart2 = alt.Chart(df_counts).mark_bar(
+                            color="#4A90E2", cornerRadiusEnd=8
+                        ).encode(
+                            x=alt.X("عدد:Q", title="عدد التداخلات"),
+                            y=alt.Y("المادة:N", sort="-x", title=""),
                         ).properties(height=300)
-                        st.altair_chart(chart2, use_container_width=True)
+                        st.altair_chart(chart2, width='stretch')
 
                 st.markdown("---")
 
-                # جدول
-                st.subheader("📋 جدول التداخلات")
+                # PDF
+                st.markdown("### 📄 حمّل التقرير")
+                ingredient_names = [format_name(ing) for ing in ingredients]
+                try:
+                    pdf_buffer = create_pdf_report(
+                        ingredients=ingredient_names,
+                        interactions=found_interactions,
+                        pairs_checked=pairs_checked
+                    )
+                    st.download_button(
+                        label="📥 حمّل التقرير PDF",
+                        data=pdf_buffer,
+                        file_name=f"drug_interactions_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+                        mime="application/pdf",
+                        width='stretch',
+                    )
+                except Exception as e:
+                    st.error(f"❌ خطأ في إنشاء التقرير: {e}")
 
-                severity_emoji = {"major": "🔴", "moderate": "🟡", "minor": "🟢", "unknown": "⚪"}
-                severity_text = {"major": "خطير", "moderate": "متوسط", "minor": "بسيط", "unknown": "غير معروف"}
-
-                table_data = []
-                for inter in found_interactions:
-                    table_data.append({
-                        "الخطورة": f"{severity_emoji[inter['severity']]} {severity_text[inter['severity']]}",
-                        "المادة 1": inter["a"],
-                        "المادة 2": inter["b"],
-                        "الوصف": inter["description"],
-                        "التوصية": inter["management"],
-                    })
-
-                df_table = pd.DataFrame(table_data)
-                st.dataframe(df_table, use_container_width=True, hide_index=True)
-
-                st.markdown("---")
-
-                # تفاصيل
-                st.subheader("📖 تفاصيل كل تداخل")
-
-                severity_icons = {
-                    "major": "🔴 خطير",
-                    "moderate": "🟡 متوسط",
-                    "minor": "🟢 بسيط",
-                    "unknown": "⚪ غير معروف",
-                }
-
-                for inter in found_interactions:
-                    icon = severity_icons.get(inter["severity"], "⚪")
-                    with st.expander(f"{icon} — **{inter['a']}** + **{inter['b']}**"):
-                        st.markdown(f"**📋 الوصف:** {inter['description']}")
-                        st.markdown(f"**💊 التوصية:** {inter['management']}")
-
-                    # ملخص كل الأزواج
-            st.markdown("---")
+            # ملخص كل الأزواج
             with st.expander(f"🔬 كل الأزواج اللي افحصت ({pairs_checked})"):
                 for ing_a, ing_b in combinations(ingredients, 2):
                     inter = get_interaction_between(ing_a.id, ing_b.id)
                     status = "⚠️ فيه تداخل" if inter else "✅ مفيش"
                     st.write(f"- {format_name(ing_a)} + {format_name(ing_b)}: {status}")
 
-            # ==================== تصدير PDF ====================
-            st.markdown("---")
-            st.subheader("📄 حمّل التقرير")
 
-            ingredient_names = [format_name(ing) for ing in ingredients]
-
-            try:
-                pdf_buffer = create_pdf_report(
-                    ingredients=ingredient_names,
-                    interactions=found_interactions,
-                    pairs_checked=pairs_checked
-                )
-
-                st.download_button(
-                    label="📥 حمّل التقرير PDF",
-                    data=pdf_buffer,
-                    file_name=f"drug_interactions_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
-                    mime="application/pdf",
-                    use_container_width=True,
-                )
-            except Exception as e:
-                st.error(f"❌ خطأ في إنشاء التقرير: {e}")
-
-
-# ===== Footer =====
+# ==================== Footer ====================
 st.markdown("---")
+st.warning("⚠️ **إخلاء مسؤولية**: هذه الأداة تعليمية فقط ولا تُغني عن استشارة الطبيب أو الصيدلي.")
 
-# إخلاء المسؤولية
-st.warning(
-    "⚠️ **إخلاء مسؤولية**: هذه الأداة لأغراض تعليمية فقط ولا تُغني عن استشارة "
-    "الطبيب أو الصيدلي. لا تتخذ أي قرار علاجي بناءً على نتائجها."
-)
-
-# المصادر
 with st.expander("📚 المصادر والمراجع"):
-    st.markdown(
-        """
-        ### 🔬 مصادر البيانات
-        
-        - **RxNorm** (المكتبة الوطنية الأمريكية للطب - NLM)
-          - استخدام: أسماء المواد الفعالة، أكواد RXCUI
-          - الرخصة: ملك عام (Public Domain)
-          - [الموقع الرسمي](https://www.nlm.nih.gov/research/umls/rxnorm/)
-        
-        - **DDInter 2.0** (قاعدة بيانات التداخلات الدوائية)
-          - استخدام: بيانات التداخلات الدوائية ودرجات الخطورة
-          - الرخصة: CC BY-NC-SA 4.0
-          - [الموقع الرسمي](http://ddinter.scbdd.com/)
-        
-        - **openFDA** (إدارة الغذاء والدواء الأمريكية - FDA)
-          - استخدام: بيانات الملصقات الدوائية
-          - الرخصة: ملك عام (Public Domain)
-          - [الموقع الرسمي](https://open.fda.gov/)
-        
-        ### 💻 التقنيات المستخدمة
-        
-        - **Python 3.10** - لغة البرمجة
-        - **Streamlit** - إطار عمل الواجهة التفاعلية
-        - **SQLAlchemy** - التعامل مع قاعدة البيانات
-        - **SQLite** - قاعدة البيانات
-        - **ReportLab** - تصدير PDF
-        - **Altair** - الرسوم البيانية
-        - **Arabic Reshaper + python-bidi** - دعم اللغة العربية
-        
-        ### ⚖️ ملاحظات قانونية
-        
-        - البيانات المستخدمة من DDInter مرخصة تحت **CC BY-NC-SA 4.0**
-        - **الاستخدام التجاري غير مسموح** بهذه البيانات
-        - الأداة متاحة للاستخدام التعليمي والشخصي فقط
-        
-        ### 📧 للتواصل
-        
-        - المطور: **Dr.Mostafa Sayed**
-        """
-    )
+    st.markdown("""
+    ### 🔬 مصادر البيانات
+    - **RxNorm** (NLM) - أسماء المواد الفعالة
+    - **DDInter 2.0** - بيانات التداخلات (CC BY-NC-SA 4.0)
+    - **openFDA** - الملصقات الدوائية
+    
+    ### 💻 التقنيات
+    Python 3.10 • Streamlit • SQLAlchemy • SQLite • ReportLab • Altair
+    
+    ### 👨‍💻 المطور
+    **Dr. Mostafa Sayed**
+    """)
 
-st.caption("© 2026 - جميع الحقوق محفوظة | صُنع بـ ❤️ في مصر")
+st.caption("© 2026 - صُنع بـ ❤️ في مصر")
