@@ -233,6 +233,50 @@ BRAND_NAMES = {
     "zyloprim": "allopurinol",
     "colcrys": "colchicine",
     "imuran": "azathioprine",
+        # ===== أسماء تجارية لمصر (جديدة) =====
+      "nexium": "esomeprazole",
+    "neksium": "esomeprazole",
+    "controloc": "pantoprazole",
+    "zurcal": "pantoprazole",
+    "pantoloc": "pantoprazole",
+    "forxiga": "dapagliflozin",
+    "xigduo": "dapagliflozin",
+    "galvus": "vildagliptin",
+    "covalmet": "vildagliptin",
+    "atcocoxib": "etoricoxib",
+    "rocoxar": "etoricoxib",
+    "arcoxia": "etoricoxib",
+    "neurontin": "gabapentin",
+    "gabaverona": "gabapentin",
+    "cialis": "tadalafil",
+    "tadatrona": "tadalafil",
+    "eliquis": "apixaban",
+    "apixguard": "apixaban",
+    "jardiance": "empagliflozin",
+    "empodiab": "empagliflozin",
+    "zithromax": "azithromycin",
+    "azibactocin": "azithromycin",
+    "crestor": "rosuvastatin",
+    "coversyl": "perindopril",
+    "concor": "bisoprolol",
+    "dilatrend": "carvedilol",
+    "cardura": "doxazosin",
+    "isordil": "isosorbide dinitrate",
+    "betaserc": "betahistine",
+    "fosamax": "alendronate",
+    "keppra": "levetiracetam",
+    "cipralex": "escitalopram",
+    "abilify": "aripiprazole",
+    "rivotril": "clonazepam",
+    "cymbalta": "duloxetine",
+    "lyrica": "pregabalin",
+    "januvia": "sitagliptin",
+    "trajenta": "linagliptin",
+    "invokana": "canagliflozin",
+    "xarelto": "rivaroxaban",
+    "pradaxa": "dabigatran",
+    "spiriva": "tiotropium",
+    "singulair": "montelukast",
 }
 
 # ===== المواد الفعالة (مع RXCUI من RxNorm) =====
@@ -338,7 +382,40 @@ INGREDIENTS = [
     {"name": "sildenafil", "rxnorm_cui": "136411"},
     {"name": "allopurinol", "rxnorm_cui": "519"},
     {"name": "colchicine", "rxnorm_cui": "2683"},
-    {"name": "azathioprine", "rxnorm_cui": "1256"},
+        {"name": "azathioprine", "rxnorm_cui": "1256"},
+    
+    # ===== مواد فعالة شائعة في مصر (إضافة جديدة) =====
+    {"name": "esomeprazole", "rxnorm_cui": "283742"},  # Nexium
+    {"name": "pantoprazole", "rxnorm_cui": "40790"},    # Controloc
+    {"name": "dapagliflozin", "rxnorm_cui": "1488564"}, # Forxiga
+    {"name": "vildagliptin", "rxnorm_cui": "325840"},   # Galvus
+    {"name": "etoricoxib", "rxnorm_cui": "151467"},     # Atcocoxib
+    {"name": "gabapentin", "rxnorm_cui": "25480"},      # Neurontin
+    {"name": "tadalafil", "rxnorm_cui": "358263"},      # Cialis
+    {"name": "apixaban", "rxnorm_cui": "1364430"},      # Eliquis
+    {"name": "empagliflozin", "rxnorm_cui": "1545653"}, # Jardiance
+    {"name": "azithromycin", "rxnorm_cui": "18631"},    # Zithromax
+    {"name": "rosuvastatin", "rxnorm_cui": "301542"},   # Crestor
+    {"name": "perindopril", "rxnorm_cui": "54552"},     # Coversyl
+    {"name": "bisoprolol", "rxnorm_cui": "19484"},      # Concor
+    {"name": "carvedilol", "rxnorm_cui": "20352"},      # Dilatrend
+    {"name": "doxazosin", "rxnorm_cui": "3523"},        # Cardura
+    {"name": "isosorbide dinitrate", "rxnorm_cui": "5709"},  # Isordil
+    {"name": "betahistine", "rxnorm_cui": "1515"},      # Betaserc
+    {"name": "alendronate", "rxnorm_cui": "1490"},      # Fosamax
+    {"name": "levetiracetam", "rxnorm_cui": "114477"},  # Keppra
+    {"name": "escitalopram", "rxnorm_cui": "321988"},   # Cipralex
+    {"name": "aripiprazole", "rxnorm_cui": "352272"},   # Abilify
+    {"name": "clonazepam", "rxnorm_cui": "2598"},       # Rivotril
+    {"name": "duloxetine", "rxnorm_cui": "72625"},      # Cymbalta
+    {"name": "pregabalin", "rxnorm_cui": "187832"},     # Lyrica
+    {"name": "sitagliptin", "rxnorm_cui": "593411"},    # Januvia
+    {"name": "linagliptin", "rxnorm_cui": "1100699"},   # Trajenta
+    {"name": "canagliflozin", "rxnorm_cui": "1372882"}, # Invokana
+    {"name": "rivaroxaban", "rxnorm_cui": "1114195"},   # Xarelto
+    {"name": "dabigatran", "rxnorm_cui": "1037045"},    # Pradaxa
+    {"name": "tiotropium", "rxnorm_cui": "69120"},      # Spiriva
+    {"name": "montelukast", "rxnorm_cui": "88249"},     # Singulair
 ]
 
 
@@ -718,12 +795,197 @@ INTERACTIONS = [
     {"a": "metformin", "b": "pantoprazole", "severity": "minor",
      "description": "البانتوبرازول قد يزيد تركيز الميتفورمين.",
      "management": "راقب مستويات السكر."},
-    {"a": "levothyroxine", "b": "omeprazole", "severity": "moderate",
+        {"a": "levothyroxine", "b": "omeprazole", "severity": "moderate",
      "description": "الأوميبرازول يقلل امتصاص الليفوثيروكسين.",
      "management": "خد الليفوثيروكسين على معدة فاضية قبل الأوميبرازول بـ 4 ساعات."},
     {"a": "levothyroxine", "b": "pantoprazole", "severity": "moderate",
      "description": "البانتوبرازول يقلل امتصاص الليفوثيروكسين.",
      "management": "خد الليفوثيروكسين على معدة فاضية."},
+    
+    # ========== مضادات التجلط الجديدة ==========
+    {"a": "apixaban", "b": "aspirin", "severity": "major",
+     "description": "زيادة خطر النزيف عند الجمع بين مضادي التجلط.",
+     "management": "تجنب الجمع إلا تحت إشراف طبي. راقب علامات النزيف."},
+    {"a": "apixaban", "b": "ibuprofen", "severity": "major",
+     "description": "الإيبوبروفين يزيد خطر النزيف مع الأبيكسابان.",
+     "management": "تجنب الجمع. استخدم باراسيتامول كبديل."},
+    {"a": "apixaban", "b": "naproxen", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "تجنب الجمع."},
+    {"a": "apixaban", "b": "diclofenac", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "تجنب الجمع."},
+    {"a": "apixaban", "b": "warfarin", "severity": "major",
+     "description": "ممنوع الجمع - خطر نزيف شديد.",
+     "management": "ممنوع الجمع تماماً. استشر الطبيب."},
+    {"a": "apixaban", "b": "clopidogrel", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "تجنب الجمع إلا تحت إشراف طبي."},
+    {"a": "apixaban", "b": "heparin", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "راقب علامات النزيف."},
+    {"a": "rivaroxaban", "b": "aspirin", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "تجنب الجمع إلا تحت إشراف طبي."},
+    {"a": "rivaroxaban", "b": "ibuprofen", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "تجنب الجمع. استخدم باراسيتامول كبديل."},
+    {"a": "rivaroxaban", "b": "warfarin", "severity": "major",
+     "description": "ممنوع الجمع - خطر نزيف شديد.",
+     "management": "ممنوع الجمع."},
+    {"a": "rivaroxaban", "b": "clopidogrel", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "راقب علامات النزيف."},
+    {"a": "dabigatran", "b": "aspirin", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "تجنب الجمع إلا تحت إشراف طبي."},
+    {"a": "dabigatran", "b": "ibuprofen", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "تجنب الجمع."},
+    {"a": "dabigatran", "b": "warfarin", "severity": "major",
+     "description": "ممنوع الجمع.",
+     "management": "ممنوع الجمع."},
+    {"a": "dabigatran", "b": "clopidogrel", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "راقب علامات النزيف."},
+    
+    # ========== مضادات الاكتئاب الجديدة ==========
+    {"a": "escitalopram", "b": "tramadol", "severity": "major",
+     "description": "خطر متلازمة السيروتونين.",
+     "management": "تجنب الجمع. استخدم مسكن بديل."},
+    {"a": "escitalopram", "b": "aspirin", "severity": "moderate",
+     "description": "زيادة خطر النزيف المعوي.",
+     "management": "راقب علامات النزيف."},
+    {"a": "escitalopram", "b": "ibuprofen", "severity": "moderate",
+     "description": "زيادة خطر النزيف المعوي.",
+     "management": "راقب علامات النزيف."},
+    {"a": "escitalopram", "b": "naproxen", "severity": "moderate",
+     "description": "زيادة خطر النزيف المعوي.",
+     "management": "راقب علامات النزيف."},
+    {"a": "escitalopram", "b": "warfarin", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "راقب INR وعلامات النزيف."},
+    {"a": "duloxetine", "b": "tramadol", "severity": "major",
+     "description": "خطر متلازمة السيروتونين.",
+     "management": "تجنب الجمع."},
+    {"a": "duloxetine", "b": "aspirin", "severity": "moderate",
+     "description": "زيادة خطر النزيف المعوي.",
+     "management": "راقب علامات النزيف."},
+    {"a": "duloxetine", "b": "ibuprofen", "severity": "moderate",
+     "description": "زيادة خطر النزيف المعوي.",
+     "management": "راقب علامات النزيف."},
+    {"a": "duloxetine", "b": "warfarin", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "راقب INR."},
+    
+    # ========== مضادات الصرع والأعصاب ==========
+    {"a": "gabapentin", "b": "morphine", "severity": "moderate",
+     "description": "زيادة التهدئة واكتئاب التنفس.",
+     "management": "راقب التنفس."},
+    {"a": "gabapentin", "b": "tramadol", "severity": "moderate",
+     "description": "زيادة التهدئة.",
+     "management": "راقب المريض."},
+    {"a": "gabapentin", "b": "diazepam", "severity": "moderate",
+     "description": "زيادة التهدئة.",
+     "management": "راقب المريض."},
+    {"a": "pregabalin", "b": "morphine", "severity": "moderate",
+     "description": "زيادة التهدئة واكتئاب التنفس.",
+     "management": "راقب التنفس."},
+    {"a": "pregabalin", "b": "tramadol", "severity": "moderate",
+     "description": "زيادة التهدئة.",
+     "management": "راقب المريض."},
+    {"a": "pregabalin", "b": "diazepam", "severity": "moderate",
+     "description": "زيادة التهدئة.",
+     "management": "راقب المريض."},
+    {"a": "levetiracetam", "b": "carbamazepine", "severity": "moderate",
+     "description": "تفاعل معقد - مراقبة المستويات.",
+     "management": "راقب مستويات الدواء."},
+    
+    # ========== البنزوديازيبينات ==========
+    {"a": "clonazepam", "b": "morphine", "severity": "moderate",
+     "description": "اكتئاب التنفس.",
+     "management": "راقب التنفس."},
+    {"a": "clonazepam", "b": "tramadol", "severity": "moderate",
+     "description": "زيادة التهدئة.",
+     "management": "راقب المريض."},
+    {"a": "clonazepam", "b": "diazepam", "severity": "moderate",
+     "description": "زيادة التهدئة.",
+     "management": "راقب المريض."},
+    
+    # ========== مضادات الالتهاب الجديدة ==========
+    {"a": "etoricoxib", "b": "warfarin", "severity": "major",
+     "description": "زيادة خطر النزيف.",
+     "management": "تجنب الجمع. راقب INR."},
+    {"a": "etoricoxib", "b": "aspirin", "severity": "moderate",
+     "description": "زيادة خطر النزيف المعوي.",
+     "management": "تجنب الجمع."},
+    {"a": "etoricoxib", "b": "ibuprofen", "severity": "moderate",
+     "description": "تجنب الجمع بين مضادين غير ستيرويديين.",
+     "management": "تجنب الجمع."},
+    {"a": "etoricoxib", "b": "naproxen", "severity": "moderate",
+     "description": "تجنب الجمع.",
+     "management": "تجنب الجمع."},
+    {"a": "etoricoxib", "b": "lisinopril", "severity": "moderate",
+     "description": "يقلل تأثير الليسينوبريل.",
+     "management": "راقب ضغط الدم."},
+    {"a": "etoricoxib", "b": "furosemide", "severity": "moderate",
+     "description": "يقلل تأثير مدرات البول.",
+     "management": "راقب استجابة المريض."},
+    {"a": "etoricoxib", "b": "losartan", "severity": "moderate",
+     "description": "يقلل تأثير اللوسارتان.",
+     "management": "راقب ضغط الدم."},
+    
+    # ========== مضادات حيوية ==========
+    {"a": "azithromycin", "b": "warfarin", "severity": "major",
+     "description": "يزيد تأثير الوارفارين.",
+     "management": "راقب INR."},
+    {"a": "azithromycin", "b": "digoxin", "severity": "moderate",
+     "description": "يزيد مستويات الديجوكسين.",
+     "management": "راقب مستويات الديجوكسين."},
+    {"a": "azithromycin", "b": "amiodarone", "severity": "major",
+     "description": "خطر اضطراب نظم القلب.",
+     "management": "تجنب الجمع."},
+    
+    # ========== أدوية السكري الجديدة ==========
+    {"a": "dapagliflozin", "b": "furosemide", "severity": "moderate",
+     "description": "خطر الجفاف.",
+     "management": "راقب السوائل."},
+    {"a": "dapagliflozin", "b": "insulin", "severity": "moderate",
+     "description": "خطر نقص السكر.",
+     "management": "راقب مستويات السكر."},
+    {"a": "empagliflozin", "b": "furosemide", "severity": "moderate",
+     "description": "خطر الجفاف.",
+     "management": "راقب السوائل."},
+    {"a": "empagliflozin", "b": "insulin", "severity": "moderate",
+     "description": "خطر نقص السكر.",
+     "management": "راقب مستويات السكر."},
+    {"a": "vildagliptin", "b": "insulin", "severity": "moderate",
+     "description": "خطر نقص السكر.",
+     "management": "راقب مستويات السكر."},
+    {"a": "vildagliptin", "b": "glibenclamide", "severity": "moderate",
+     "description": "خطر نقص السكر.",
+     "management": "راقب مستويات السكر."},
+    
+    # ========== مضادات الذهان ==========
+    {"a": "aripiprazole", "b": "diazepam", "severity": "moderate",
+     "description": "زيادة التهدئة.",
+     "management": "راقب المريض."},
+    {"a": "aripiprazole", "b": "carbamazepine", "severity": "moderate",
+     "description": "يقلل مستويات الأريبيبرازول.",
+     "management": "راقب فعالية الدواء."},
+    
+    # ========== السيلدينافيل والتادالافيل ==========
+    {"a": "tadalafil", "b": "nitroglycerin", "severity": "major",
+     "description": "انخفاض خطير في ضغط الدم - ممنوع الجمع.",
+     "management": "ممنوع الجمع تماماً."},
+    {"a": "tadalafil", "b": "amlodipine", "severity": "moderate",
+     "description": "انخفاض ضغط الدم.",
+     "management": "راقب ضغط الدم."},
+    
+    # ========== أدوية الحموضة ==========
+    {"a": "esomeprazole", "b": "clopidogrel", "severity": "major",
+     "description": "يقلل تأثير الكلوبيدوجريل.",
+     "management": "استخدم بانتوبرازول بدلاً منه."},
 ]
 
 
