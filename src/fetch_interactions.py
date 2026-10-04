@@ -415,7 +415,35 @@ INGREDIENTS = [
     {"name": "rivaroxaban", "rxnorm_cui": "1114195"},   # Xarelto
     {"name": "dabigatran", "rxnorm_cui": "1037045"},    # Pradaxa
     {"name": "tiotropium", "rxnorm_cui": "69120"},      # Spiriva
-    {"name": "montelukast", "rxnorm_cui": "88249"},     # Singulair
+        {"name": "montelukast", "rxnorm_cui": "88249"},     # Singulair
+    
+    # ===== مواد فعالة من قائمة WHO (إضافة جديدة) =====
+    {"name": "semaglutide", "rxnorm_cui": "1991302"},
+    {"name": "dulaglutide", "rxnorm_cui": "1598394"},
+    {"name": "liraglutide", "rxnorm_cui": "602888"},
+    {"name": "tirzepatide", "rxnorm_cui": "2601723"},
+    {"name": "rituximab", "rxnorm_cui": "121191"},
+    {"name": "glatiramer", "rxnorm_cui": "1009486"},
+    {"name": "cladribine", "rxnorm_cui": "2140"},
+    {"name": "pembrolizumab", "rxnorm_cui": "1547545"},
+    {"name": "atezolizumab", "rxnorm_cui": "1657455"},
+    {"name": "zanubrutinib", "rxnorm_cui": "2288376"},
+    {"name": "ibrutinib", "rxnorm_cui": "1442981"},
+    {"name": "blinatumomab", "rxnorm_cui": "1599812"},
+    {"name": "colistin", "rxnorm_cui": "2507"},
+    {"name": "sofosbuvir", "rxnorm_cui": "1102129"},
+    {"name": "velpatasvir", "rxnorm_cui": "1747692"},
+    {"name": "dolutegravir", "rxnorm_cui": "1116186"},
+    {"name": "tenofovir", "rxnorm_cui": "1942896"},
+    {"name": "emtricitabine", "rxnorm_cui": "211338"},
+    {"name": "lamivudine", "rxnorm_cui": "6825"},
+    {"name": "delamanid", "rxnorm_cui": "1593673"},
+    {"name": "clofazimine", "rxnorm_cui": "2579"},
+    {"name": "dasatinib", "rxnorm_cui": "358312"},
+    {"name": "nilotinib", "rxnorm_cui": "705793"},
+    {"name": "ravidasvir", "rxnorm_cui": "2049414"},
+    {"name": "ceftolozane", "rxnorm_cui": "1249352"},
+    {"name": "tazobactam", "rxnorm_cui": "11314"},
 ]
 
 
